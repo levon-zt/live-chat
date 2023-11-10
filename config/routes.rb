@@ -1,3 +1,6 @@
 Rails.application.routes.draw do
-  get "up" => "rails/health#show"
+  resources :sessions, only: [:new, :create, :destroy]
+  resources :registrations, only: [:new, :create]
+  
+  root :to => 'authentication#sign_in'
 end
