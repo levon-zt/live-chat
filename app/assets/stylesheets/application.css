@@ -13,3 +13,23 @@
  *= require_tree .
  *= require_self
  */
+body {
+  background-color: #fafafa !important;
+}
+
+.auth-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  width: calc(100% - 16px);
+}
+
+html, body {
+  height: 100%;
+}
+
+.fs-12 {
+  font-size: 12px
+}

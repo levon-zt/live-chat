@@ -4,15 +4,17 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new(sign_up_user_params)
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_path
+      redirect_to chat_path
+    else
+      render :new, status: 422
     end
   end
 
   private
-  def user_params
+  def sign_up_user_params
     params.require(:user).permit(:email, :username, :password, :password_confirmation)
   end
 end

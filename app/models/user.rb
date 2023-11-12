@@ -10,7 +10,7 @@
 class User < ApplicationRecord
   has_secure_password
 
-  validates :email, presence: true, uniqueness: true, format: { with: /\A\S+@.+\.\S+\z/, message: "Please provide a valid email" }
+  validates :email, presence: true, uniqueness: true, format: { with: /\A\S+@.+\.\S+\z/, message: "is not valid" }
   validates :username, presence: true, uniqueness: true
   validates :password_digest, presence: true
 
@@ -22,5 +22,9 @@ class User < ApplicationRecord
 
   def messages
     self.chat_room_users.flat_map{ |chat_room_user| chat_room_user.chat_room_messages }
+  end
+
+  def last_message_with(other_user)
+    self.messages.sort_by{ |message| message.created_at}.last || {}
   end
 end
