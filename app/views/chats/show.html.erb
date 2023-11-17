@@ -1,0 +1,42 @@
+<div class="row h-100">
+  <div class="col-2 border-end p-0">
+    <% @users.each do |user| %>
+      <%= link_to chat_path(user) do %>
+        <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if user.id == @selected_user_id %>">
+          <div><%= user.username %></div>
+                    <%
+=begin%>
+              todo: change with rooms with more than 2 users will exist
+<%
+=end%>
+          <div class="fs-12"><%= user.last_message_with(Current.user.id)[:message] %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="col-10 p-0 bg-white">
+    <div class="d-flex flex-column justify-content-between h-100" >
+      <div class="p-1 text-center d-flex justify-content-between">
+        <h1><%= @chat_room ? @chat_room.name : @selected_user.username %></h1>
+        <%= button_to "Create new group", class: "btn btn-primary"%>
+      </div>
+      <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
+        <%= turbo_stream_from "chat_room_messages" %>
+        <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
+          <%= render @messages, message_owner_id: Current.user.id %>
+        </turbo-frame>
+      </div>
+      <div class="p-3">
+        <%= form_with url: chats_url do |form| %>
+          <div class="input-group">
+            <%= form.text_field :message, class: "form-control" %>
+            <%= form.hidden_field :selected_user_id, value: @selected_user_id %>
+            <%= form.hidden_field :chat_room_id, value: @chat_room == nil ? 0 : @chat_room.id %>
+            <%= form.hidden_field :message_owner_id, value: Current.user %>
+            <%= form.submit "Send", class: "btn btn-outline-secondary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

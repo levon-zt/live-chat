@@ -7,7 +7,7 @@ class RegistrationsController < ApplicationController
     @user = User.new(sign_up_user_params)
     if @user.save
       session[:user_id] = @user.id
-      redirect_to chat_path
+      redirect_to chats_path
     else
       render :new, status: 422
     end

@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
 
     if user.present? && user.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_to chat_path
+      redirect_to chats_path
     else
       @error = 'Invalid credentials'
       render :new, status: 422

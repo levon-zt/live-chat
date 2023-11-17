@@ -6,8 +6,9 @@ Rails.application.routes.draw do
   get '/sign_up', to: 'registrations#new'
   post '/sign_up', to: 'registrations#create'
 
-  get '/chat', to: 'chats#index'
-  post '/chat', to: 'chats#create'
+  resources :chats, only: [:index, :show, :create], constraints: { id: /[0-9]+/ }
+
+  match '/*', to: 'application#index', via: :all
 
   root :to => 'chats#index'
 end
