@@ -29,7 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_10_083255) do
   end
 
   create_table "chat_rooms", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

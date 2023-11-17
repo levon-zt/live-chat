@@ -15,13 +15,20 @@
           </li>
         </ul>
       <% else %>
-        <div class="dropdown">
-          <button class="btn dropdown-toggle" data-bs-toggle="dropdown"><%= Current.user.email %></button>
-          <ul class="dropdown-menu">
-            <li><%= button_to "Log out", sign_out_path, class: "dropdown-item", method: :delete %></li>
-          </ul>
+        <div class="d-flex">
+          <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#searchUsers">
+            Search Users
+          </button>
+          <div class="dropdown">
+            <button class="btn dropdown-toggle" data-bs-toggle="dropdown"><%= Current.user.email %></button>
+            <ul class="dropdown-menu">
+              <li><%= button_to "Log out", sign_out_path, class: "dropdown-item", method: :delete %></li>
+            </ul>
+          </div>
         </div>
       <% end %>
     </div>
   </div>
 </nav>
+
+<%= render partial: "search_modal"%>

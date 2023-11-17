@@ -1,31 +1,47 @@
-<div class="row h-100">
-  <div class="col-2 border-end p-0">
-    <% @users.each do |user| %>
-      <%= link_to chat_path(user) do %>
-        <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if user.id == @selected_user_id %>">
-          <div><%= user.username %></div>
-                    <%
-=begin%>
-              todo: change with rooms with more than 2 users will exist
 <%
-=end%>
-          <div class="fs-12"><%= user.last_message_with(Current.user.id)[:message] %></div>
-        </div>
+=begin%>
+ <div class="row h-100">
+  <div class="col-2 border-end p-0">
+    <% if @chat_rooms %>
+      <% @chat_rooms.each do |chat_room| %>
+        <%= link_to chat_path(chat_room) do %>
+          <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if chat_room.id == @selected.id %>">
+            <div><%= chat_room.name_for_user(Current.user.id) %></div>
+            <div class="fs-12"><%= chat_room.last_message %></div>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @users %>
+      <% @users.each do |user| %>
+        <%= link_to chat_path(user) do %>
+          <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if user.id == @selected.id %>">
+            <div><%= user.username  %></div>
+          </div>
+        <% end %>
       <% end %>
     <% end %>
   </div>
   <div class="col-10 p-0 bg-white">
     <div class="d-flex flex-column justify-content-between h-100" >
       <div class="p-1 text-center d-flex justify-content-between">
-        <h1><%= @chat_room ? @chat_room.name : @selected_user.username %></h1>
-        <%= button_to "Create new group", class: "btn btn-primary"%>
+        <h1>
+          <% if @chat_room && @chat_room.name%>
+            <%= @chat_room.name %>
+          <% elsif @selected_user %>
+            <%= @selected_user.username %>
+          <% end %>
+        </h1>
+        <%= button_to "Create new group", class: "btn btn-primary" if @chat_should_be_shown%>
       </div>
-      <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
-        <%= turbo_stream_from "chat_room_messages" %>
-        <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
-          <%= render @messages, message_owner_id: Current.user.id %>
-        </turbo-frame>
-      </div>
+      <% if @messages %>
+        <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
+          <%= turbo_stream_from "chat_room_messages" %>
+          <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
+            <%= render @messages, message_owner_id: Current.user.id, chat_room_id: @chat_room ? @chat_room.id : 0 %>
+          </turbo-frame>
+        </div>
+      <% end %>
       <div class="p-3">
         <%= form_with url: chats_url do |form| %>
           <div class="input-group">
@@ -39,4 +55,8 @@
       </div>
     </div>
   </div>
-</div>
+</div> 
+<%
+=end
+%>
+

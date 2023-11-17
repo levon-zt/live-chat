@@ -25,7 +25,7 @@ class User < ApplicationRecord
   end
 
   def last_message_with(other_user_id)
-    chat_room = self.chat_rooms.find{|chat_room| chat_room.only_for_users(self.id, other_user_id)}
+    chat_room = self.chat_rooms.find{|chat_room| chat_room.only_for_users?(self.id, other_user_id)}
     if !chat_room
       return {}
     end

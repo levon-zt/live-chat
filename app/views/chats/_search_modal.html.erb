@@ -1,0 +1,25 @@
+<div class="modal fade" id="searchUsers" tabindex="-1" aria-labelledby="searchUsersLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <%= form_with url: '/chats/search' do |form| %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchUsersLabel">Search users</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <%= form.label "Username or email" %>
+            <%= form.text_field :search_term, class: "form-control" %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <%= form.submit "Search", class: "btn btn-primary"%>
+        </div>
+      <% end %>
+      <div>
+        <% @users.each do |user| %>
+          <%= user.username %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
