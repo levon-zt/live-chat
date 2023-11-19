@@ -42,10 +42,11 @@ class ChatsController < AuthenticationController
 
   def search
     search_term = params[:search_term].downcase
-    @users = User.include{|user| user.username.downcase.include?(search_term)}.associated
-    puts @users.map{|x| x.username}
+    @users = User.where{|user| user.username.downcase.include?(search_term)}.associated
     @chat_rooms = User.where{|chat_room| chat_room.name.downcase.include?(search_term)}
-    render :show, status: 422
+    render json: @users
+    # render layout: false
+
   end
 
   def create

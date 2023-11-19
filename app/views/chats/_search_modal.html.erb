@@ -1,25 +1,21 @@
-<div class="modal fade" id="searchUsers" tabindex="-1" aria-labelledby="searchUsersLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div data-controller="users_search" data-users_search-target="modal" class="modal fade" id="searchUsers" tabindex="-1" aria-labelledby="searchUsersLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <%= form_with url: '/chats/search' do |form| %>
+      <%= form_with url: chats_search_path do |form| %>
         <div class="modal-header">
-          <h5 class="modal-title" id="searchUsersLabel">Search users</h5>
+          <h5 class="modal-title" id="searchUsersLabel">Search</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <%= form.label "Username or email" %>
-            <%= form.text_field :search_term, class: "form-control" %>
+          <%= form.label "Username or email" %>
+          <%= form.text_field :search_term, class: "form-control", 'data-users_search-target': 'saerchTerm' %>
+          <div data-users_search-target="usersList"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <%= form.submit "Search", class: "btn btn-primary"%>
+          <button type="button" data-action="click->users_search#submit" class="btn btn-primary">Search</button>
         </div>
       <% end %>
-      <div>
-        <% @users.each do |user| %>
-          <%= user.username %>
-        <% end %>
-      </div>
     </div>
   </div>
 </div>
