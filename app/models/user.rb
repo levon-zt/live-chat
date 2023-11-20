@@ -15,14 +15,8 @@ class User < ApplicationRecord
   validates :password_digest, presence: true
 
   has_many :chat_room_users
-
-  def chat_rooms
-    self.chat_room_users.map{ |user| user.chat_room }
-  end
-
-  def messages
-    self.chat_room_users.flat_map{ |chat_room_user| chat_room_user.chat_room_messages }
-  end
+  has_many :chat_rooms, through: :chat_room_users
+  has_many :messages, through: :chat_room_users
 
   def last_message_with(other_user_id)
     chat_room = self.chat_rooms.find{|chat_room| chat_room.only_for_users?(self.id, other_user_id)}

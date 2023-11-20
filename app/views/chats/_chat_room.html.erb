@@ -1,0 +1,6 @@
+<%= link_to chat_path(chat_room) do %>
+  <div class="border-bottom p-2 hover-overlay cursor-pointer">
+    <div><%= chat_room.name_for_user(Current.user.id) %></div>
+    <div class="fs-12"><%= chat_room.last_message[:message] %></div>
+  </div>
+<% end %>

@@ -1,25 +1,38 @@
-<%
-=begin%>
- <div class="row h-100">
+<div class="row h-100">
   <div class="col-2 border-end p-0">
-    <% if @chat_rooms %>
-      <% @chat_rooms.each do |chat_room| %>
-        <%= link_to chat_path(chat_room) do %>
-          <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if chat_room.id == @selected.id %>">
-            <div><%= chat_room.name_for_user(Current.user.id) %></div>
-            <div class="fs-12"><%= chat_room.last_message %></div>
-          </div>
-        <% end %>
+    <div class="border-bottom p-2">
+      <%= form_with url: chat_path(@chat_room), method: :get do |form| %>
+        <div class="input-group">
+          <%= form.text_field :search_term, class: "form-control", placeholder: "Search", value: @search_term %>
+          <%= link_to chat_path(@chat_room), class: "input-group-text text-decoration-none" do %>
+            <span>&#x2715;</span>
+          <% end %>
+        </div>
       <% end %>
-    <% end %>
-    <% if @users %>
-      <% @users.each do |user| %>
-        <%= link_to chat_path(user) do %>
-          <div class="border-bottom p-2 <%= "bg-secondary bg-gradient text-white" if user.id == @selected.id %>">
-            <div><%= user.username  %></div>
-          </div>
-        <% end %>
+    </div>
+    <% if @search_term %>
+      <% if !@filtered_chat_rooms.empty? %>
+        <div class="bg-white text-center border-bottom">Contacts</div>
+        <%= render partial: "chat_room", collection: @chat_rooms %>
       <% end %>
+      <% if !@filtered_users.empty? %>
+        <div class="bg-white text-center border-bottom">Others</div>
+        <div data-controller="userAsChat">
+          <% @filtered_users.each do |user| %>
+            <%= form_with url: chats_path, data: {'userAsChat-target': 'userContainer'} do |form| %>
+              <div class="border-bottom p-2 hover-overlay cursor-pointer" data-action="click->userAsChat#submit">
+                <div><%= user.username %></div>
+                <%= form.hidden_field :user_id, value: user.id %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @filtered_chat_rooms.empty? && @filtered_users.empty? %>
+        <div class="text-center mt-2 fst-italic">Not Found</div>
+      <% end %>
+    <% elsif @chat_rooms %>
+      <%= render partial: "chat_room", collection: @chat_rooms %>
     <% end %>
   </div>
   <div class="col-10 p-0 bg-white">
@@ -28,13 +41,13 @@
         <h1>
           <% if @chat_room && @chat_room.name%>
             <%= @chat_room.name %>
-          <% elsif @selected_user %>
-            <%= @selected_user.username %>
+          <% else %>
+            <%= @chat_room.name_for_user(Current.user.id) %>
           <% end %>
         </h1>
         <%= button_to "Create new group", class: "btn btn-primary" if @chat_should_be_shown%>
       </div>
-      <% if @messages %>
+      <% if @messages && !@messages.empty? %>
         <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
           <%= turbo_stream_from "chat_room_messages" %>
           <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
@@ -43,12 +56,12 @@
         </div>
       <% end %>
       <div class="p-3">
-        <%= form_with url: chats_url do |form| %>
+        <%= form_with url: chat_room_messages_path do |form| %>
           <div class="input-group">
-            <%= form.text_field :message, class: "form-control" %>
+            <%= form.text_field :message, autofocus: true, class: "form-control" %>
             <%= form.hidden_field :selected_user_id, value: @selected_user_id %>
             <%= form.hidden_field :chat_room_id, value: @chat_room == nil ? 0 : @chat_room.id %>
-            <%= form.hidden_field :message_owner_id, value: Current.user %>
+            <%= form.hidden_field :message_owner_id, value: Current.user.id %>
             <%= form.submit "Send", class: "btn btn-outline-secondary" %>
           </div>
         <% end %>
@@ -56,8 +69,3 @@
     </div>
   </div>
 </div> 
-<%
-=end
-%>
-
-dfsdfsgdfsghdfg

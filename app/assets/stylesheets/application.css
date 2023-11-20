@@ -33,3 +33,13 @@ html, body {
 .fs-12 {
   font-size: 12px
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-overlay:hover {
+  background-color: rgb(108,117,125);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+  color: white
+}

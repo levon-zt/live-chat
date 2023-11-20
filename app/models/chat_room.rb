@@ -2,17 +2,11 @@
 
 class ChatRoom < ApplicationRecord
   has_many :chat_room_users
-
-  def users
-    self.chat_room_users.map{ |chat_room_user| chat_room_user.user }
-  end
-
-  def messages
-    self.chat_room_users.flat_map{ |chat_room_user| chat_room_user.chat_room_messages }.sort_by{|message| message.created_at}
-  end
+  has_many :users, through: :chat_room_users
+  has_many :messages, through: :chat_room_users, source: :chat_room_messages
 
   def last_message
-    self.messages.sort_by{|message| message.created_at}.last
+    self.messages.sort_by{|message| message.created_at}.last || {}
   end
 
   def only_for_users?(*users_ids)
@@ -21,9 +15,9 @@ class ChatRoom < ApplicationRecord
   end
 
   def name_for_user(user_id)
-    self.name || self.chat_room_users
-      .select{|chat_room_user| chat_room_user.user_id != user_id}
-      .map{|chat_room_user| chat_room_user.user.username}
+    self.name || self.users
+      .select{|user| user.id != user_id}
+      .map{|user| user.username}
       .join(', ')
   end
 end

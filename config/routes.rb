@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post '/sign_up', to: 'registrations#create'
 
   resources :chats, only: [:index, :show, :create], constraints: { id: /[0-9]+/ }
-  get "/chats/search", to: 'chats#search'
+  resources :chat_room_messages, only: [:create]
 
   match '/*', to: 'application#index', via: :all
 
