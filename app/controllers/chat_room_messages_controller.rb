@@ -1,10 +1,10 @@
 class ChatRoomMessagesController < AuthenticationController
   def create
-    message_owner_id = params[:message_owner_id].to_i
+    message_author_id = params[:message_author_id].to_i
     chat_room_id = params[:chat_room_id].to_i
     message = params[:message]
 
-    if message_owner_id <= 0 || message.blank?
+    if message_author_id <= 0 || message.blank?
       redirect_to chats_path
       return
     end
@@ -16,7 +16,7 @@ class ChatRoomMessagesController < AuthenticationController
       return
     end
 
-    chat_message_author = chat_room.chat_room_users.find_by(user_id: message_owner_id)
+    chat_message_author = chat_room.chat_room_users.find_by(user_id: message_author_id)
     chat_room_message = ChatRoomMessage.new(message: message, chat_room_user_id: chat_message_author.id)
 
     if chat_room_message.save
@@ -25,7 +25,7 @@ class ChatRoomMessagesController < AuthenticationController
         locals: {
           chat_room_message: chat_room_message,
           chat_room_id: chat_room.id,
-          message_owner_id: message_owner_id
+          is_user_message_owner: chat_room_message.chat_room_user.user_id == message_author_id
         }
       )
     end

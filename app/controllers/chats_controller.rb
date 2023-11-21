@@ -1,17 +1,19 @@
 class ChatsController < AuthenticationController
   def index
     users = User.where.not(id: Current.user.id)
-    if users.empty?
+    chat_room = ChatRoomUser.find_by(user_id: Current.user.id)
+
+    if !chat_room
       redirect_to chat_path(0)
-    else 
-      redirect_to chat_path(users.first)
+    else
+      redirect_to chat_path(chat_room)
     end
   end
-  
+
   def show
     id = params[:id].to_i
     @search_term = params[:search_term] ? params[:search_term].downcase : nil
-    @chat_room = ChatRoom.find_by(id: id)
+    @chat_room = ChatRoom.find_by(id: id) || ChatRoom.new(id: 0)
     @chat_rooms = ChatRoomUser.where(user_id: Current.user.id).map{|user| user.chat_room}.uniq
     @filtered_users = []
     @filtered_chat_rooms = []
@@ -29,7 +31,7 @@ class ChatsController < AuthenticationController
         .where(["lower(username) LIKE ? and users.id<>?", "%#{@search_term}%", Current.user.id])
         .where.not(id: filtered_users)
     end
-    @messages = @chat_room ? @chat_room.messages : []
+    @messages = @chat_room ? @chat_room.sorted_messages : []
   end
 
   def create

@@ -1,6 +1,6 @@
 <%= link_to chat_path(chat_room) do %>
-  <div class="border-bottom p-2 hover-overlay cursor-pointer">
+  <div class="border-bottom p-2 hover-overlay cursor-pointer <%= 'bg-secondary bg-gradient text-white' if @chat_room.id == chat_room.id%>">
     <div><%= chat_room.name_for_user(Current.user.id) %></div>
-    <div class="fs-12"><%= chat_room.last_message[:message] %></div>
+    <div class="fs-12"><%= chat_room.sorted_messages.last.message if !chat_room.messages.empty? %></div>
   </div>
 <% end %>

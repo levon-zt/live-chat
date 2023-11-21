@@ -51,7 +51,9 @@
         <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
           <%= turbo_stream_from "chat_room_messages" %>
           <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
-            <%= render @messages, message_owner_id: Current.user.id, chat_room_id: @chat_room ? @chat_room.id : 0 %>
+            <% @messages.each do |message| %>
+              <%= render message, is_user_message_owner: message.chat_room_user.user_id == Current.user.id, chat_room_id: @chat_room.id %>
+            <% end %>
           </turbo-frame>
         </div>
       <% end %>
@@ -59,13 +61,12 @@
         <%= form_with url: chat_room_messages_path do |form| %>
           <div class="input-group">
             <%= form.text_field :message, autofocus: true, class: "form-control" %>
-            <%= form.hidden_field :selected_user_id, value: @selected_user_id %>
-            <%= form.hidden_field :chat_room_id, value: @chat_room == nil ? 0 : @chat_room.id %>
-            <%= form.hidden_field :message_owner_id, value: Current.user.id %>
+            <%= form.hidden_field :chat_room_id, value: @chat_room.id %>
+            <%= form.hidden_field :message_author_id, value: Current.user.id %>
             <%= form.submit "Send", class: "btn btn-outline-secondary" %>
           </div>
         <% end %>
       </div>
     </div>
   </div>
-</div> 
+</div>

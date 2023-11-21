@@ -5,8 +5,8 @@ class ChatRoom < ApplicationRecord
   has_many :users, through: :chat_room_users
   has_many :messages, through: :chat_room_users, source: :chat_room_messages
 
-  def last_message
-    self.messages.sort_by{|message| message.created_at}.last || {}
+  def sorted_messages
+    self.messages.order(:created_at)
   end
 
   def only_for_users?(*users_ids)
