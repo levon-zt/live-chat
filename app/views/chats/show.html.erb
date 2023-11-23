@@ -39,22 +39,16 @@
     <div class="d-flex flex-column justify-content-between h-100" >
       <div class="p-1 text-center d-flex justify-content-between">
         <h1>
-          <% if @chat_room && @chat_room.name%>
-            <%= @chat_room.name %>
-          <% else %>
-            <%= @chat_room.name_for_user(Current.user.id) %>
-          <% end %>
+          <%= @chat_room.name_for_user(Current.user.id) if @chat_room %>
         </h1>
         <%= button_to "Create new group", class: "btn btn-primary" if @chat_should_be_shown%>
       </div>
       <% if @messages && !@messages.empty? %>
-        <div data-controller="messages" data-messages-target="messagesContainer" class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
+        <div class="d-flex flex-column p-3 h-100 overflow-auto border-top border-bottom messages-container" style="max-height: calc(100vh - 189px)">
           <%= turbo_stream_from "chat_room_messages" %>
-          <turbo-frame id="chat_room_messages" data-action="turbo:load->messages#scrollDown">
-            <% @messages.each do |message| %>
-              <%= render message, is_user_message_owner: message.chat_room_user.user_id == Current.user.id, chat_room_id: @chat_room.id %>
-            <% end %>
-          </turbo-frame>
+          <%= turbo_frame_tag "chat_room_messages" do %>
+            <%= render @messages, message_author_id: Current.user.id, chat_room_id: @chat_room.id %>
+          <% end %>
         </div>
       <% end %>
       <div class="p-3">
