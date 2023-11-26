@@ -26,7 +26,7 @@ class ChatRoomMessagesController < AuthenticationController
         partial: "chat_room_messages/chat_room_message",
         locals: { 
           chat_room_message: chat_room_message,
-          message_author_id: message_author_id,
+          message_author_id: Current.user.id,
           chat_room_id: chat_room.id
         }
       )
